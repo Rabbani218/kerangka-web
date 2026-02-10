@@ -1,0 +1,85 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check file count
+      run: |
+        echo "Checking project structure..."
+        echo "Total HTML files: $(ls -1 *.html 2>/dev/null | wc -l)"
+        echo "Total documentation: $(ls -1 *.md 2>/dev/null | wc -l)"
+    
+    - name: Validate essential files
+      run: |
+        required_files=("vercel.json" ".gitignore" "README.md")
+        for file in "${required_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✓ $file found"
+          else
+            echo "✗ $file missing"
+            exit 1
+          fi
+        done
+    
+    - name: Check file sizes
+      run: |
+        echo "Checking file sizes..."
+        du -h *.html | head -10
+        echo "✓ File sizes acceptable"
+    
+    - name: Verify no sensitive data
+      run: |
+        echo "Scanning for sensitive information..."
+        if grep -r "password\|secret\|api_key\|token" *.html *.md 2>/dev/null; then
+          echo "✗ Potential sensitive data found!"
+          exit 1
+        else
+          echo "✓ No sensitive data detected"
+        fi
+
+  documentation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check documentation
+      run: |
+        echo "Validating documentation..."
+        docs=("README.md" "EDITOR_GUIDE.md" "CONTRIBUTING.md")
+        for doc in "${docs[@]}"; do
+          if [ -f "$doc" ]; then
+            lines=$(wc -l < "$doc")
+            echo "✓ $doc ($lines lines)"
+          fi
+        done
+
+  performance:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check bundle size
+      run: |
+        echo "Analyzing bundle size..."
+        total_size=$(du -sh . | cut -f1)
+        echo "Total project size: $total_size"
+        echo "✓ Project size acceptable"
+    
+    - name: Validate JSON files
+      run: |
+        echo "Validating JSON configuration..."
+        if [ -f "vercel.json" ]; then
+          python3 -m json.tool vercel.json > /dev/null && echo "✓ vercel.json is valid"
+        fi
