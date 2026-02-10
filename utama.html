@@ -92,6 +92,17 @@
             box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
         }
 
+        .btn-editor {
+            background: #4db8ff;
+            color: #000;
+        }
+
+        .btn-editor:hover {
+            background: #3da1e6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(77, 184, 255, 0.4);
+        }
+
         .info {
             margin-top: 30px;
             padding-top: 30px;
@@ -110,6 +121,8 @@
         
         <div class="menu-buttons">
             <button class="btn-user" onclick="goToUser()">Ambil Antrian</button>
+            <button class="btn-editor" onclick="goToEditor()">🎨 Website Editor</button>
+            <button class="btn-editor" onclick="goToBuilder()">📐 Layout Builder</button>
         </div>
 
         <div class="info">
@@ -124,6 +137,14 @@
 
         function goToUser() {
             window.location.href = 'user-form.html';
+        }
+
+        function goToEditor() {
+            window.location.href = 'editor.html';
+        }
+
+        function goToBuilder() {
+            window.location.href = 'layout-builder.html';
         }
     </script>
 </body>

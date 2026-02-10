@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Layout Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        .builder-container {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* COMPONENTS PANEL */
+        .components-panel {
+            width: 280px;
+            background: #242424;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .components-panel h2 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #4db8ff;
+            text-transform: uppercase;
+            border-bottom: 2px solid #4db8ff;
+            padding-bottom: 10px;
+        }
+
+        .component-item {
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .component-item:hover {
+            border-color: #4db8ff;
+            transform: translateX(5px);
+        }
+
+        .component-item:active {
+            cursor: grabbing;
+        }
+
+        .component-item-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4db8ff;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .component-item-desc {
+            font-size: 10px;
+            color: #999;
+        }
+
+        /* CANVAS */
+        .canvas-area {
+            flex: 1;
+            background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+            overflow: auto;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .canvas {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 800px;
+            min-height: 600px;
+            position: relative;
+            padding: 40px;
+        }
+
+        .canvas.drag-over {
+            border: 2px dashed #4db8ff;
+        }
+
+        .canvas-element {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            cursor: move;
+            transition: all 0.2s ease;
+            min-height: 40px;
+            user-select: none;
+        }
+
+        .canvas-element:hover {
+            box-shadow: 0 0 0 2px #4db8ff;
+        }
+
+        .canvas-element.selected {
+            outline: 2px solid #4db8ff;
+            outline-offset: -2px;
+        }
+
+        .element-label {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            font-size: 10px;
+            background: #4db8ff;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        .element-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .canvas-element:hover .element-delete {
+            opacity: 1;
+        }
+
+        /* PROPERTIES PANEL */
+        .properties-panel {
+            width: 300px;
+            background: #242424;
+            border-left: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .properties-panel h3 {
+            font-size: 12px;
+            color: #4db8ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .property-control {
+            margin-bottom: 15px;
+        }
+
+        .property-control label {
+            display: block;
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .property-control input,
+        .property-control select,
+        .property-control textarea {
+            width: 100%;
+            padding: 8px 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .property-control input:focus,
+        .property-control select:focus,
+        .property-control textarea:focus {
+            outline: none;
+            border-color: #4db8ff;
+            box-shadow: 0 0 5px rgba(77, 184, 255, 0.3);
+        }
+
+        .property-control textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* ACTION BUTTONS */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            border-color: #4db8ff;
+            color: #4db8ff;
+        }
+
+        .action-btn-primary {
+            background: #4db8ff;
+            border-color: #4db8ff;
+            color: #000;
+            grid-column: 1 / -1;
+        }
+
+        .action-btn-primary:hover {
+            background: #3da1e6;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #242424;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .toolbar-btn {
+            padding: 10px 15px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            border-color: #4db8ff;
+            color: #4db8ff;
+        }
+
+        .canvas-h1, .canvas-h2, .canvas-p, .canvas-btn {
+            width: 100%;
+        }
+
+        .canvas-btn {
+            padding: 10px 20px;
+            background: #343538;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .canvas-btn:hover {
+            background: #585a5f;
+        }
+
+        @media (max-width: 1200px) {
+            .components-panel {
+                width: 240px;
+            }
+            .properties-panel {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .builder-container {
+                flex-direction: column;
+            }
+            .components-panel, .properties-panel {
+                width: 100%;
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-container">
+        <!-- COMPONENTS LIBRARY -->
+        <div class="components-panel">
+            <h2>📦 Components</h2>
+            
+            <div class="component-item" draggable="true" onclick="addComponent('heading')">
+                <div class="component-item-title">📝 Heading</div>
+                <div class="component-item-desc">Large text title</div>
+            </div>
+
+            <div class="component-item" draggable="true" onclick="addComponent('paragraph')">
+                <div class="component-item-title">📄 Paragraph</div>
+                <div class="component-item-desc">Regular text content</div>
+            </div>
+
+            <div class="component-item" draggable="true" onclick="addComponent('button')">
+                <div class="component-item-title">🔘 Button</div>
+                <div class="component-item-desc">Clickable button</div>
+            </div>
+
+            <div class="component-item" draggable="true" onclick="addComponent('box')">
+                <div class="component-item-title">📦 Box</div>
+                <div class="component-item-desc">Container box</div>
+            </div>
+
+            <div class="component-item" draggable="true" onclick="addComponent('input')">
+                <div class="component-item-title">⌨️ Input Field</div>
+                <div class="component-item-desc">Text input form</div>
+            </div>
+
+            <div class="component-item" draggable="true" onclick="addComponent('image')">
+                <div class="component-item-title">🖼️ Image</div>
+                <div class="component-item-desc">Image placeholder</div>
+            </div>
+
+            <div class="component-item" draggable="true" onclick="addComponent('divider')">
+                <div class="component-item-title">➖ Divider</div>
+                <div class="component-item-desc">Visual separator</div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="undoAction()">↶ Undo</button>
+                <button class="action-btn" onclick="redoAction()">↷ Redo</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn action-btn-primary" onclick="exportLayout()">💾 Export</button>
+            </div>
+        </div>
+
+        <!-- CANVAS -->
+        <div class="canvas-area">
+            <div class="canvas" id="canvas"></div>
+        </div>
+
+        <!-- PROPERTIES -->
+        <div class="properties-panel">
+            <h3>🔧 Properties</h3>
+            
+            <div class="property-control">
+                <label>Element Type</label>
+                <input type="text" id="elemType" readonly>
+            </div>
+
+            <div class="property-control">
+                <label>Content</label>
+                <textarea id="elemContent" placeholder="Edit element content"></textarea>
+            </div>
+
+            <div class="property-control">
+                <label>Text Color</label>
+                <input type="color" id="elemColor" value="#000000">
+            </div>
+
+            <div class="property-control">
+                <label>Background Color</label>
+                <input type="color" id="elemBgColor" value="#ffffff">
+            </div>
+
+            <div class="property-control">
+                <label>Font Size (px)</label>
+                <input type="number" id="elemFontSize" value="14" min="8" max="72">
+            </div>
+
+            <div class="property-control">
+                <label>Padding (px)</label>
+                <input type="number" id="elemPadding" value="10" min="0" max="100">
+            </div>
+
+            <div class="property-control">
+                <label>Margin (px)</label>
+                <input type="number" id="elemMargin" value="10" min="0" max="100">
+            </div>
+
+            <div class="property-control">
+                <label>Border Radius (px)</label>
+                <input type="number" id="elemRadius" value="4" min="0" max="50">
+            </div>
+
+            <div class="property-control">
+                <label>Width (%)</label>
+                <input type="number" id="elemWidth" value="100" min="10" max="100">
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="duplicateElement()">📋 Copy</button>
+                <button class="action-btn" onclick="deleteElement()" style="color: #ff4444; border-color: #ff4444;">🗑️ Delete</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn action-btn-primary" onclick="viewCode()">👁️ View Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <button class="toolbar-btn" onclick="downloadLayout()">⬇️ Download HTML</button>
+        <button class="toolbar-btn" onclick="goBack()">🏠 Home</button>
+    </div>
+
+    <script>
+        let selectedElement = null;
+        let history = [];
+        let historyStep = 0;
+
+        class LayoutBuilder {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.initDragAndDrop();
+                this.attachCanvasListeners();
+            }
+
+            initDragAndDrop() {
+                document.addEventListener('dragstart', (e) => {
+                    if (e.target.classList.contains('component-item')) {
+                        const type = e.target.getAttribute('onclick').match(/'(\w+)'/)[1];
+                        e.dataTransfer.effectAllowed = 'copy';
+                        e.dataTransfer.setData('text/plain', type);
+                    }
+                });
+
+                this.canvas.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy';
+                    this.canvas.classList.add('drag-over');
+                });
+
+                this.canvas.addEventListener('dragleave', () => {
+                    this.canvas.classList.remove('drag-over');
+                });
+
+                this.canvas.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.canvas.classList.remove('drag-over');
+                    const type = e.dataTransfer.getData('text/plain');
+                    this.addElementToCanvas(type);
+                });
+            }
+
+            attachCanvasListeners() {
+                this.canvas.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('canvas-element')) {
+                        this.selectElement(e.target);
+                    }
+                });
+            }
+
+            addElementToCanvas(type) {
+                const element = this.createElement(type);
+                this.canvas.appendChild(element);
+                this.saveHistory();
+                this.selectElement(element);
+            }
+
+            createElement(type) {
+                const div = document.createElement('div');
+                div.className = 'canvas-element';
+                div.draggable = true;
+                div.dataset.type = type;
+
+                const label = document.createElement('span');
+                label.className = 'element-label';
+                label.textContent = type.toUpperCase();
+                div.appendChild(label);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'element-delete';
+                deleteBtn.textContent = '×';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    div.remove();
+                    this.saveHistory();
+                };
+                div.appendChild(deleteBtn);
+
+                const content = document.createElement('div');
+                content.style.paddingTop = '20px';
+
+                switch (type) {
+                    case 'heading':
+                        content.innerHTML = '<h1 style="margin: 0;">Heading Title</h1>';
+                        break;
+                    case 'paragraph':
+                        content.innerHTML = '<p style="margin: 0;">Your text content here...</p>';
+                        break;
+                    case 'button':
+                        content.innerHTML = '<button class="canvas-btn">Click Me</button>';
+                        break;
+                    case 'box':
+                        content.innerHTML = '<div style="background: #f0f0f0; padding: 20px; border-radius: 4px;">Box Content</div>';
+                        break;
+                    case 'input':
+                        content.innerHTML = '<input type="text" placeholder="Enter text here" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">';
+                        break;
+                    case 'image':
+                        content.innerHTML = '<img src="https://via.placeholder.com/300x200" style="width: 100%; border-radius: 4px;">';
+                        break;
+                    case 'divider':
+                        content.innerHTML = '<hr style="border: none; border-top: 2px solid #ccc; margin: 10px 0;">';
+                        break;
+                }
+
+                div.appendChild(content);
+                return div;
+            }
+
+            selectElement(element) {
+                document.querySelectorAll('.canvas-element').forEach(el => el.classList.remove('selected'));
+                element.classList.add('selected');
+                selectedElement = element;
+                this.updateProperties(element);
+            }
+
+            updateProperties(element) {
+                document.getElementById('elemType').value = element.dataset.type || 'unknown';
+                document.getElementById('elemContent').value = element.innerText || '';
+                
+                const styles = window.getComputedStyle(element);
+                document.getElementById('elemColor').value = this.rgbToHex(styles.color) || '#000000';
+                document.getElementById('elemBgColor').value = this.rgbToHex(styles.backgroundColor) || '#ffffff';
+                document.getElementById('elemFontSize').value = parseInt(styles.fontSize) || 14;
+                document.getElementById('elemPadding').value = parseInt(styles.padding) || 10;
+                document.getElementById('elemMargin').value = parseInt(styles.margin) || 10;
+                document.getElementById('elemRadius').value = parseInt(styles.borderRadius) || 4;
+                document.getElementById('elemWidth').value = element.style.width ? parseInt(element.style.width) : 100;
+            }
+
+            rgbToHex(rgb) {
+                if (!rgb || !rgb.includes('rgb')) return null;
+                const values = rgb.match(/\d+/g);
+                if (!values) return null;
+                return '#' + values.slice(0, 3).map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+            }
+
+            saveHistory() {
+                history = history.slice(0, historyStep + 1);
+                history.push(this.canvas.innerHTML);
+                historyStep++;
+            }
+
+            undo() {
+                if (historyStep > 0) {
+                    historyStep--;
+                    this.canvas.innerHTML = history[historyStep];
+                }
+            }
+
+            redo() {
+                if (historyStep < history.length - 1) {
+                    historyStep++;
+                    this.canvas.innerHTML = history[historyStep];
+                }
+            }
+        }
+
+        const builder = new LayoutBuilder();
+
+        function addComponent(type) {
+            builder.addElementToCanvas(type);
+        }
+
+        function selectElement(element) {
+            builder.selectElement(element);
+        }
+
+        // PROPERTIES UPDATE
+        document.getElementById('elemContent').addEventListener('change', function() {
+            if (selectedElement) {
+                selectedElement.innerText = this.value;
+                builder.saveHistory();
+            }
+        });
+
+        document.getElementById('elemColor').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.color = this.value;
+            builder.saveHistory();
+        });
+
+        document.getElementById('elemBgColor').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.backgroundColor = this.value;
+            builder.saveHistory();
+        });
+
+        document.getElementById('elemFontSize').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.fontSize = this.value + 'px';
+            builder.saveHistory();
+        });
+
+        document.getElementById('elemPadding').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.padding = this.value + 'px';
+            builder.saveHistory();
+        });
+
+        document.getElementById('elemMargin').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.margin = this.value + 'px';
+            builder.saveHistory();
+        });
+
+        document.getElementById('elemRadius').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.borderRadius = this.value + 'px';
+            builder.saveHistory();
+        });
+
+        document.getElementById('elemWidth').addEventListener('change', function() {
+            if (selectedElement) selectedElement.style.width = this.value + '%';
+            builder.saveHistory();
+        });
+
+        function duplicateElement() {
+            if (selectedElement) {
+                const clone = selectedElement.cloneNode(true);
+                selectedElement.after(clone);
+                builder.saveHistory();
+            }
+        }
+
+        function deleteElement() {
+            if (selectedElement) {
+                selectedElement.remove();
+                selectedElement = null;
+                builder.saveHistory();
+            }
+        }
+
+        function undoAction() {
+            builder.undo();
+        }
+
+        function redoAction() {
+            builder.redo();
+        }
+
+        function exportLayout() {
+            const html = generateHTMLFile();
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'layout.html';
+            a.click();
+        }
+
+        function downloadLayout() {
+            exportLayout();
+        }
+
+        function generateHTMLFile() {
+            const content = document.getElementById('canvas').innerHTML;
+            return `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .canvas {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .canvas-element {
+            margin-bottom: 20px;
+        }
+        .element-label {
+            display: none;
+        }
+        .element-delete {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas">
+        ${content}
+    </div>
+</body>
+</html>`;
+        }
+
+        function viewCode() {
+            const code = generateHTMLFile();
+            const modal = window.open('', '', 'width=800,height=600');
+            modal.document.write('<pre style="background: #1a1a1a; color: #f0f0f0; padding: 20px; font-size: 12px; overflow: auto;">' + 
+                                 code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+        }
+
+        function goBack() {
+            if (confirm('Go back to home? Any unsaved changes will be lost.')) {
+                window.location.href = 'utama.html';
+            }
+        }
+    </script>
+</body>
+</html>

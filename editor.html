@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Editor - Visual Layout Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #1a1a1a;
+            color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .editor-container {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 300px;
+            background: #242424;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #4db8ff;
+            text-transform: uppercase;
+            border-bottom: 2px solid #4db8ff;
+            padding-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* COLOR PICKER */
+        .color-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .color-group label {
+            font-size: 12px;
+            width: 100px;
+            color: #ccc;
+        }
+
+        .color-input {
+            width: 50px;
+            height: 35px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+        }
+
+        /* INPUT FIELDS */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 8px 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 12px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #4db8ff;
+            box-shadow: 0 0 5px rgba(77, 184, 255, 0.3);
+        }
+
+        /* BUTTONS */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 12px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #1a1a1a;
+            color: #f0f0f0;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            border-color: #4db8ff;
+            color: #4db8ff;
+        }
+
+        .btn-primary {
+            background: #4db8ff;
+            border-color: #4db8ff;
+            color: #000;
+            grid-column: 1 / -1;
+        }
+
+        .btn-primary:hover {
+            background: #3da1e6;
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            border-color: #ff4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e63333;
+        }
+
+        /* CENTER EDITOR */
+        .editor-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a1a1a;
+            border-right: 1px solid #444;
+        }
+
+        .editor-header {
+            background: #242424;
+            padding: 15px 20px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-header h1 {
+            font-size: 14px;
+            color: #f0f0f0;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toolbar-btn {
+            padding: 8px 15px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            border-color: #4db8ff;
+            color: #4db8ff;
+        }
+
+        .preview-area {
+            flex: 1;
+            overflow: auto;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .preview-frame {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .editable-element {
+            padding: 30px;
+            min-height: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editable-element.selected {
+            outline: 2px solid #4db8ff;
+            outline-offset: -2px;
+        }
+
+        /* PROPERTIES PANEL */
+        .properties-panel {
+            width: 280px;
+            background: #242424;
+            border-left: 1px solid #444;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .properties-panel h2 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #4db8ff;
+            text-transform: uppercase;
+            border-bottom: 2px solid #4db8ff;
+            padding-bottom: 10px;
+        }
+
+        .property-item {
+            margin-bottom: 15px;
+        }
+
+        .property-item label {
+            display: block;
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .property-item input,
+        .property-item select {
+            width: 100%;
+            padding: 8px 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 12px;
+        }
+
+        .property-item input:focus,
+        .property-item select:focus {
+            outline: none;
+            border-color: #4db8ff;
+            box-shadow: 0 0 5px rgba(77, 184, 255, 0.3);
+        }
+
+        .slider-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            flex: 1;
+        }
+
+        .slider-value {
+            width: 50px;
+            padding: 5px 8px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #242424;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #444;
+        }
+
+        .modal-content h2 {
+            color: #f0f0f0;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 200px;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-family: monospace;
+            font-size: 12px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #1a1a1a;
+            color: #f0f0f0;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .modal-buttons button:hover {
+            border-color: #4db8ff;
+            color: #4db8ff;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* TABS */
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: #4db8ff;
+            color: #4db8ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+            .properties-panel {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+            .sidebar, .properties-panel {
+                width: 100%;
+                max-height: 200px;
+            }
+            .editor-main {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <!-- SIDEBAR - COMPONENTS & STYLING -->
+        <div class="sidebar">
+            <h2>⚙️ Editor</h2>
+            
+            <div class="section">
+                <div class="section-title">Page Settings</div>
+                <div class="input-group">
+                    <label>Page Title</label>
+                    <input type="text" id="pageTitle" value="My Custom Page" placeholder="Enter page title">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Background</div>
+                <div class="color-group">
+                    <label>Color</label>
+                    <input type="color" id="bgColor" class="color-input" value="#ffffff">
+                </div>
+                <div class="input-group">
+                    <label>Gradient (Optional)</label>
+                    <input type="text" id="bgGradient" placeholder="e.g., 135deg, #color1, #color2">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Typography</div>
+                <div class="color-group">
+                    <label>Font Color</label>
+                    <input type="color" id="fontColor" class="color-input" value="#343538">
+                </div>
+                <div class="input-group">
+                    <label>Font Size (px)</label>
+                    <input type="number" id="fontSize" value="14" min="8" max="72">
+                </div>
+                <div class="input-group">
+                    <label>Font Family</label>
+                    <select id="fontFamily">
+                        <option value="'Press Start 2P', cursive">Press Start 2P</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Container</div>
+                <div class="input-group">
+                    <label>Max Width (px)</label>
+                    <input type="number" id="containerWidth" value="500" min="200" max="1200">
+                </div>
+                <div class="input-group">
+                    <label>Padding (px)</label>
+                    <input type="number" id="containerPadding" value="50" min="0" max="100">
+                </div>
+                <div class="color-group">
+                    <label>Border Radius (px)</label>
+                    <input type="number" id="borderRadius" value="15" min="0" max="50">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Shadow</div>
+                <div class="color-group">
+                    <label>Shadow</label>
+                    <input type="color" id="shadowColor" class="color-input" value="#343538">
+                </div>
+                <div class="input-group">
+                    <label>Shadow Blur (px)</label>
+                    <input type="number" id="shadowBlur" value="40" min="0" max="100">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="resetToDefault()">Reset</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Export/Import</div>
+                <div class="button-group">
+                    <button class="btn" onclick="exportCSS()">Export CSS</button>
+                    <button class="btn" onclick="exportHTML()">Export HTML</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER - PREVIEW -->
+        <div class="editor-main">
+            <div class="editor-header">
+                <h1>🎨 Live Preview</h1>
+                <div class="editor-toolbar">
+                    <button class="toolbar-btn" onclick="toggleFullscreen()">Fullscreen</button>
+                    <button class="toolbar-btn" onclick="downloadPage()">💾 Save</button>
+                    <button class="toolbar-btn" onclick="goHome()">Home</button>
+                </div>
+            </div>
+            <div class="preview-area">
+                <div class="preview-frame">
+                    <div class="editable-element" id="mainContent" onclick="selectElement(this)">
+                        <h1 id="editTitle" style="margin-bottom: 30px;">Sistem Antrian</h1>
+                        <p id="editText" style="line-height: 1.6; margin-bottom: 20px;">
+                            Selamat datang di sistem manajemen antrian kami. Aplikasi ini dirancang untuk memberikan pengalaman terbaik.
+                        </p>
+                        <div style="display: flex; gap: 15px; margin-top: 30px;">
+                            <button style="flex: 1; padding: 12px; background: #343538; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Button 1</button>
+                            <button style="flex: 1; padding: 12px; background: #949AA4; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Button 2</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT - PROPERTIES PANEL -->
+        <div class="properties-panel">
+            <h2>📋 Properties</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('element')">Element</button>
+                <button class="tab-btn" onclick="switchTab('advanced')">Advanced</button>
+                <button class="tab-btn" onclick="switchTab('code')">Code</button>
+            </div>
+
+            <!-- ELEMENT TAB -->
+            <div id="element-tab" class="tab-content active">
+                <div class="property-item">
+                    <label>Element Type</label>
+                    <select id="elementType" onchange="updateElementType()">
+                        <option value="heading">Heading</option>
+                        <option value="paragraph">Paragraph</option>
+                        <option value="button">Button</option>
+                        <option value="box">Box/Container</option>
+                    </select>
+                </div>
+
+                <div class="property-item">
+                    <label>Text Content</label>
+                    <input type="text" id="elementText" placeholder="Enter text content">
+                </div>
+
+                <div class="property-item">
+                    <label>Text Color</label>
+                    <input type="color" id="elementColor" value="#343538">
+                </div>
+
+                <div class="property-item">
+                    <label>Background Color</label>
+                    <input type="color" id="elementBgColor" value="#ffffff">
+                </div>
+
+                <div class="property-item">
+                    <label>Padding (px)</label>
+                    <input type="number" id="elementPadding" value="0" min="0">
+                </div>
+
+                <div class="property-item">
+                    <label>Margin (px)</label>
+                    <input type="number" id="elementMargin" value="0" min="0">
+                </div>
+
+                <div class="property-item">
+                    <label>Border Radius (px)</label>
+                    <input type="number" id="elementRadius" value="0" min="0">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-danger" onclick="deleteElement()">Delete Element</button>
+                </div>
+            </div>
+
+            <!-- ADVANCED TAB -->
+            <div id="advanced-tab" class="tab-content">
+                <div class="property-item">
+                    <label>Font Weight</label>
+                    <select id="fontWeight">
+                        <option value="300">Light</option>
+                        <option value="400" selected>Normal</option>
+                        <option value="600">Bold</option>
+                        <option value="700">Extra Bold</option>
+                    </select>
+                </div>
+
+                <div class="property-item">
+                    <label>Text Alignment</label>
+                    <select id="textAlign">
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+
+                <div class="property-item">
+                    <label>Line Height</label>
+                    <input type="number" id="lineHeight" value="1.5" min="1" max="3" step="0.1">
+                </div>
+
+                <div class="property-item">
+                    <label>Letter Spacing (px)</label>
+                    <input type="number" id="letterSpacing" value="0" min="-2" max="5">
+                </div>
+
+                <div class="property-item">
+                    <label>Display</label>
+                    <select id="display">
+                        <option value="block">Block</option>
+                        <option value="flex">Flex</option>
+                        <option value="grid">Grid</option>
+                        <option value="inline">Inline</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CODE TAB -->
+            <div id="code-tab" class="tab-content">
+                <div class="property-item">
+                    <label>Custom CSS</label>
+                    <textarea id="customCSS" placeholder="Add custom CSS rules here"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="applyCustomCSS()">Apply CSS</button>
+
+                <div class="property-item" style="margin-top: 20px;">
+                    <label>HTML Code</label>
+                    <textarea id="customHTML" placeholder="View/Edit HTML here"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="applyCustomHTML()">Apply HTML</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORT MODAL -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <h2 id="exportTitle">Export Code</h2>
+            <textarea id="exportCode" readonly></textarea>
+            <div class="modal-buttons">
+                <button onclick="copyToClipboard()">📋 Copy</button>
+                <button onclick="downloadExport()">⬇️ Download</button>
+                <button onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedElement = null;
+        let exportType = 'css';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStyles();
+            addEventListeners();
+        });
+
+        // ADD EVENT LISTENERS
+        function addEventListeners() {
+            document.getElementById('pageTitle').addEventListener('change', updatePageTitle);
+            document.getElementById('bgColor').addEventListener('change', updateBackground);
+            document.getElementById('bgGradient').addEventListener('change', updateBackground);
+            document.getElementById('fontColor').addEventListener('change', updateFonts);
+            document.getElementById('fontSize').addEventListener('change', updateFonts);
+            document.getElementById('fontFamily').addEventListener('change', updateFonts);
+            document.getElementById('containerWidth').addEventListener('change', updateContainer);
+            document.getElementById('containerPadding').addEventListener('change', updateContainer);
+            document.getElementById('borderRadius').addEventListener('change', updateContainer);
+            document.getElementById('shadowColor').addEventListener('change', updateShadow);
+            document.getElementById('shadowBlur').addEventListener('change', updateShadow);
+
+            // Element properties
+            document.getElementById('elementText').addEventListener('change', updateElementProperty);
+            document.getElementById('elementColor').addEventListener('change', updateElementProperty);
+            document.getElementById('elementBgColor').addEventListener('change', updateElementProperty);
+            document.getElementById('elementPadding').addEventListener('change', updateElementProperty);
+            document.getElementById('elementMargin').addEventListener('change', updateElementProperty);
+            document.getElementById('elementRadius').addEventListener('change', updateElementProperty);
+            document.getElementById('fontWeight').addEventListener('change', updateElementProperty);
+            document.getElementById('textAlign').addEventListener('change', updateElementProperty);
+            document.getElementById('lineHeight').addEventListener('change', updateElementProperty);
+            document.getElementById('letterSpacing').addEventListener('change', updateElementProperty);
+            document.getElementById('display').addEventListener('change', updateElementProperty);
+        }
+
+        // UPDATE STYLES
+        function updateBackground() {
+            const bgColor = document.getElementById('bgColor').value;
+            const bgGradient = document.getElementById('bgGradient').value;
+            const previewFrame = document.querySelector('.preview-frame');
+            
+            if (bgGradient) {
+                previewFrame.style.background = `linear-gradient(${bgGradient})`;
+            } else {
+                previewFrame.style.background = bgColor;
+            }
+        }
+
+        function updatePageTitle() {
+            const title = document.getElementById('pageTitle').value;
+            document.title = title;
+            document.getElementById('editTitle').textContent = title;
+        }
+
+        function updateFonts() {
+            const fontColor = document.getElementById('fontColor').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const fontFamily = document.getElementById('fontFamily').value;
+            const mainContent = document.getElementById('mainContent');
+            
+            mainContent.style.color = fontColor;
+            mainContent.style.fontSize = fontSize + 'px';
+            mainContent.style.fontFamily = fontFamily;
+        }
+
+        function updateContainer() {
+            const width = document.getElementById('containerWidth').value;
+            const padding = document.getElementById('containerPadding').value;
+            const radius = document.getElementById('borderRadius').value;
+            const previewFrame = document.querySelector('.preview-frame');
+            
+            previewFrame.style.maxWidth = width + 'px';
+            previewFrame.style.borderRadius = radius + 'px';
+            document.getElementById('mainContent').style.padding = padding + 'px';
+        }
+
+        function updateShadow() {
+            const color = document.getElementById('shadowColor').value;
+            const blur = document.getElementById('shadowBlur').value;
+            const previewFrame = document.querySelector('.preview-frame');
+            
+            previewFrame.style.boxShadow = `0 20px ${blur}px rgba(${hexToRgb(color)}, 0.8)`;
+        }
+
+        function updateElementProperty() {
+            if (!selectedElement) return;
+            
+            const text = document.getElementById('elementText').value;
+            const color = document.getElementById('elementColor').value;
+            const bgColor = document.getElementById('elementBgColor').value;
+            const padding = document.getElementById('elementPadding').value;
+            const margin = document.getElementById('elementMargin').value;
+            const radius = document.getElementById('elementRadius').value;
+            const weight = document.getElementById('fontWeight').value;
+            const align = document.getElementById('textAlign').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const letterSpacing = document.getElementById('letterSpacing').value;
+            const display = document.getElementById('display').value;
+
+            if (text && selectedElement.id !== 'editTitle') {
+                selectedElement.textContent = text;
+            }
+            
+            selectedElement.style.color = color;
+            selectedElement.style.backgroundColor = bgColor;
+            selectedElement.style.padding = padding ? padding + 'px' : '';
+            selectedElement.style.margin = margin ? margin + 'px' : '';
+            selectedElement.style.borderRadius = radius ? radius + 'px' : '';
+            selectedElement.style.fontWeight = weight;
+            selectedElement.style.textAlign = align;
+            selectedElement.style.lineHeight = lineHeight;
+            selectedElement.style.letterSpacing = letterSpacing ? letterSpacing + 'px' : '';
+            selectedElement.style.display = display;
+        }
+
+        function updateElementType() {
+            if (!selectedElement) return;
+            const type = document.getElementById('elementType').value;
+            // Could implement element conversion here
+        }
+
+        function selectElement(element) {
+            if (selectedElement) {
+                selectedElement.classList.remove('selected');
+            }
+            
+            selectedElement = element;
+            element.classList.add('selected');
+            
+            // Populate properties
+            document.getElementById('elementText').value = element.textContent || '';
+            document.getElementById('elementColor').value = getColorValue(element.style.color) || '#343538';
+            document.getElementById('elementBgColor').value = getColorValue(element.style.backgroundColor) || '#ffffff';
+            document.getElementById('elementPadding').value = parseInt(element.style.padding) || 0;
+            document.getElementById('elementMargin').value = parseInt(element.style.margin) || 0;
+            document.getElementById('elementRadius').value = parseInt(element.style.borderRadius) || 0;
+            document.getElementById('fontWeight').value = element.style.fontWeight || '400';
+            document.getElementById('textAlign').value = element.style.textAlign || 'left';
+            document.getElementById('lineHeight').value = element.style.lineHeight || '1.5';
+            document.getElementById('letterSpacing').value = parseInt(element.style.letterSpacing) || 0;
+            document.getElementById('display').value = element.style.display || 'block';
+        }
+
+        function deleteElement() {
+            if (selectedElement && selectedElement.id !== 'editTitle') {
+                selectedElement.remove();
+                selectedElement = null;
+            }
+        }
+
+        function resetToDefault() {
+            if (confirm('Reset all styles to default?')) {
+                location.reload();
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tab + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function applyCustomCSS() {
+            const css = document.getElementById('customCSS').value;
+            let styleEl = document.getElementById('customStyleEl');
+            
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = 'customStyleEl';
+                document.head.appendChild(styleEl);
+            }
+            
+            styleEl.textContent = css;
+        }
+
+        function applyCustomHTML() {
+            const html = document.getElementById('customHTML').value;
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = html;
+        }
+
+        function exportCSS() {
+            exportType = 'css';
+            const css = generateCSS();
+            document.getElementById('exportTitle').textContent = 'Export CSS';
+            document.getElementById('exportCode').value = css;
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        function exportHTML() {
+            exportType = 'html';
+            const html = generateHTML();
+            document.getElementById('exportTitle').textContent = 'Export HTML';
+            document.getElementById('exportCode').value = html;
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        function generateCSS() {
+            const bgColor = document.getElementById('bgColor').value;
+            const bgGradient = document.getElementById('bgGradient').value;
+            const fontColor = document.getElementById('fontColor').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const fontFamily = document.getElementById('fontFamily').value;
+            const width = document.getElementById('containerWidth').value;
+            const padding = document.getElementById('containerPadding').value;
+            const radius = document.getElementById('borderRadius').value;
+            const shadowColor = document.getElementById('shadowColor').value;
+            const shadowBlur = document.getElementById('shadowBlur').value;
+
+            return `/* Generated CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: ${fontFamily};
+    background: ${bgGradient ? `linear-gradient(${bgGradient})` : bgColor};
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: ${radius}px;
+    box-shadow: 0 10px ${shadowBlur}px rgba(${hexToRgb(shadowColor)}, 0.3);
+    padding: ${padding}px;
+    max-width: ${width}px;
+    width: 100%;
+    color: ${fontColor};
+    font-size: ${fontSize}px;
+}`;
+        }
+
+        function generateHTML() {
+            const title = document.getElementById('pageTitle').value;
+            const mainContent = document.getElementById('mainContent').innerHTML;
+            
+            return `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        ${generateCSS()}
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${mainContent}
+    </div>
+</body>
+</html>`;
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('exportCode');
+            code.select();
+            document.execCommand('copy');
+            alert('Code copied to clipboard!');
+        }
+
+        function downloadExport() {
+            const code = document.getElementById('exportCode').value;
+            const type = exportType === 'html' ? 'html' : 'css';
+            const filename = `custom-page.${type}`;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function downloadPage() {
+            const html = generateHTML();
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'custom-page.html';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function closeModal() {
+            document.getElementById('exportModal').classList.remove('active');
+        }
+
+        function toggleFullscreen() {
+            const preview = document.querySelector('.preview-area');
+            if (preview.requestFullscreen) {
+                preview.requestFullscreen();
+            }
+        }
+
+        function goHome() {
+            if (confirm('Go back to home? Any unsaved changes will be lost.')) {
+                window.location.href = 'utama.html';
+            }
+        }
+
+        // UTILITIES
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '52, 53, 56';
+        }
+
+        function getColorValue(color) {
+            if (!color) return null;
+            if (color.startsWith('#')) return color;
+            if (color.startsWith('rgb')) {
+                const rgb = color.match(/\d+/g);
+                return '#' + rgb.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+            }
+            return null;
+        }
+
+        function loadStyles() {
+            updateBackground();
+            updateFonts();
+            updateContainer();
+            updateShadow();
+        }
+
+        // PREVENT ZOOM ON DOUBLE CLICK
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
