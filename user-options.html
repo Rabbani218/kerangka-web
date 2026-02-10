@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opsi Lainnya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: #949AA4;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #585A5F;
+        }
+
+        h1 {
+            color: #343538;
+            font-size: 20px;
+            flex: 1;
+        }
+
+        .info-box {
+            background: #949AA4;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-card {
+            background: #f9f9f9;
+            border: 2px solid #949AA4;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .slot-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #949AA4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .option-card.disabled .slot-badge {
+            background: #c0c0c0;
+        }
+
+        .option-card:hover:not(.disabled) {
+            border-color: #585A5F;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.3);
+        }
+
+        .option-card.disabled {
+            background: #e8e8e8;
+            border-color: #c0c0c0;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .option-card.selected:not(.disabled) {
+            background: #343538;
+            border-color: #343538;
+            color: white;
+        }
+
+        .option-icon {
+            font-size: 24px;
+            min-width: 30px;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-name {
+            font-weight: 600;
+            color: #343538;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .option-card.selected .option-name {
+            color: white;
+        }
+
+        .option-desc {
+            font-size: 11px;
+            color: #585A5F;
+        }
+
+        .option-card.selected .option-desc {
+            color: #949AA4;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: #343538;
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.4);
+        }
+
+        .btn-next:disabled {
+            background: #c0c0c0;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: #949AA4;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Opsi Lainnya</h1>
+        </div>
+
+        <div class="info-box">
+            Silakan pilih opsi tambahan yang Anda inginkan
+        </div>
+
+        <div class="options-grid">
+            <div class="option-card" id="opt-stylized_soft" onclick="selectOption('stylized_soft', this)">
+                <div class="slot-badge" id="badge-stylized_soft">10</div>
+                <div class="option-icon">A1</div>
+                <div class="option-content">
+                    <div class="option-name">Art Style 1</div>
+                    <div class="option-desc">Stylized Soft Illustration</div>
+                </div>
+            </div>
+
+            <div class="option-card" id="opt-stylized_rendered" onclick="selectOption('stylized_rendered', this)">
+                <div class="slot-badge" id="badge-stylized_rendered">10</div>
+                <div class="option-icon">A2</div>
+                <div class="option-content">
+                    <div class="option-name">Art Style 2</div>
+                    <div class="option-desc">Stylized Rendered Illustration</div>
+                </div>
+            </div>
+
+            <div class="option-card" id="opt-ych" onclick="selectOption('ych', this)">
+                <div class="slot-badge" id="badge-ych">10</div>
+                <div class="option-icon">YCH</div>
+                <div class="option-content">
+                    <div class="option-name">YCH</div>
+                    <div class="option-desc">Your Character Here</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-back" onclick="goBack()">Kembali</button>
+            <button class="btn-next" id="nextBtn" onclick="goToNext()" disabled>Selesai</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedOption = null;
+
+        // Check slot availability saat halaman load
+        function checkSlotAvailability() {
+            const slots = JSON.parse(localStorage.getItem('slots') || '{"stylized_soft": 10, "stylized_rendered": 10, "ych": 10}');
+
+            const options = [
+                { id: 'stylized_soft', element: document.getElementById('opt-stylized_soft') },
+                { id: 'stylized_rendered', element: document.getElementById('opt-stylized_rendered') },
+                { id: 'ych', element: document.getElementById('opt-ych') }
+            ];
+
+            options.forEach(option => {
+                const count = slots[option.id] || 0;
+                
+                // Update badge
+                const badge = document.getElementById(`badge-${option.id}`);
+                if (badge) {
+                    badge.textContent = count;
+                }
+                
+                // Add/remove disabled class
+                if (count === 0) {
+                    option.element.classList.add('disabled');
+                } else {
+                    option.element.classList.remove('disabled');
+                }
+            });
+        }
+
+        function selectOption(option, element) {
+            // Cek apakah slot habis
+            if (element.classList.contains('disabled')) {
+                alert('Slot untuk pilihan ini sudah habis');
+                return;
+            }
+
+            // Hapus seleksi sebelumnya
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Tambahkan seleksi baru
+            element.classList.add('selected');
+            selectedOption = option;
+
+            // Aktifkan tombol selesai
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function goToNext() {
+            if (selectedOption) {
+                // Simpan opsi ke localStorage
+                localStorage.setItem('selectedOption', selectedOption);
+
+                // Arahkan ke halaman sukses
+                window.location.href = 'user-success.html';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'user-character.html';
+        }
+
+        // Jalankan saat halaman load
+        window.addEventListener('load', checkSlotAvailability);
+    </script>
+</body>
+</html>

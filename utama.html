@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Antrian Real-Time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .admin-btn-fixed {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #343538;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        .admin-btn-fixed:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.4);
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 50px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #585A5F;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-user {
+            background: #949AA4;
+            color: white;
+        }
+
+        .btn-user:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
+        }
+
+        .info {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #949AA4;
+            font-size: 12px;
+            color: #585A5F;
+        }
+    </style>
+</head>
+<body>
+    <button class="admin-btn-fixed" onclick="goToAdmin()">Admin</button>
+    
+    <div class="container">
+        <h1>Sistem Antrian</h1>
+        <p class="subtitle">Kelola dan ambil antrian dengan mudah</p>
+        
+        <div class="menu-buttons">
+            <button class="btn-user" onclick="goToUser()">Ambil Antrian</button>
+        </div>
+
+        <div class="info">
+            <p>Pilih menu sesuai kebutuhan Anda</p>
+        </div>
+    </div>
+
+    <script>
+        function goToAdmin() {
+            window.location.href = 'admin.html';
+        }
+
+        function goToUser() {
+            window.location.href = 'user-form.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Slot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #949AA4;
+        }
+
+        h1 {
+            color: #343538;
+            font-size: 14px;
+        }
+
+        .btn-back {
+            background: #949AA4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+        }
+
+        /* Login Screen */
+        .login-screen {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .login-screen h2 {
+            color: #343538;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #949AA4;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: 'Press Start 2P', cursive;
+            background: white;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #585A5F;
+            box-shadow: 0 0 0 3px rgba(148, 154, 164, 0.2);
+        }
+
+        .btn-login {
+            background: #343538;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #d9534f;
+            font-size: 9px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .section-title {
+            color: #343538;
+            margin: 30px 0 15px 0;
+            font-size: 11px;
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .slot-card {
+            background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
+            border: 3px solid #949AA4;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .slot-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.2);
+        }
+
+        .slot-card.empty {
+            background: #e8e8e8;
+            border-color: #d0d0d0;
+            opacity: 0.6;
+        }
+
+        .slot-name {
+            font-weight: 600;
+            color: #343538;
+            margin-bottom: 15px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .slot-count {
+            font-size: 36px;
+            font-weight: bold;
+            color: #343538;
+            margin-bottom: 15px;
+        }
+
+        .slot-card.empty .slot-count {
+            color: #999;
+        }
+
+        .slot-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .slot-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .slot-btn-add {
+            background: #5cb85c;
+            color: white;
+        }
+
+        .slot-btn-add:hover {
+            background: #449d44;
+            transform: scale(1.05);
+        }
+
+        .slot-btn-minus {
+            background: #f0ad4e;
+            color: white;
+        }
+
+        .slot-btn-minus:hover {
+            background: #ec971f;
+            transform: scale(1.05);
+        }
+
+        .slot-btn-delete {
+            background: #d9534f;
+            color: white;
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 9px;
+        }
+
+        .slot-btn-delete:hover {
+            background: #c9302c;
+            transform: scale(1.02);
+        }
+
+        .slot-actions {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn-reset-slots {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset-slots:hover {
+            background: #c9302c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 83, 79, 0.3);
+        }
+
+        .custom-option-form {
+            background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
+            padding: 25px;
+            border-radius: 10px;
+            border: 3px solid #949AA4;
+            margin-top: 30px;
+        }
+
+        .custom-option-form h4 {
+            color: #343538;
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #343538;
+            margin-bottom: 10px;
+            font-size: 11px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #949AA4;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: 'Press Start 2P', cursive;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #585A5F;
+            box-shadow: 0 0 0 3px rgba(148, 154, 164, 0.2);
+        }
+
+        .btn-primary {
+            background: #343538;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 14px;
+            }
+
+            .slot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <h2>Admin Login</h2>
+        <div class="login-form">
+            <input type="password" id="passwordInput" class="login-input" placeholder="Masukkan Password" />
+            <button class="btn-login" onclick="checkPassword()">Login</button>
+            <p class="error-message" id="errorMessage">Password salah!</p>
+        </div>
+    </div>
+
+    <!-- Admin Content (Hidden by default) -->
+    <div class="admin-content" id="adminContent">
+    <div class="container">
+        <div class="header">
+            <h1>Manajemen Slot</h1>
+            <button class="btn-back" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="slot-grid" id="slotGrid"></div>
+        
+        <div class="slot-actions">
+            <button class="btn-reset-slots" onclick="resetAllSlots()">Reset Semua Slot</button>
+        </div>
+
+        <div class="custom-option-form">
+            <h4>Tambah Opsi Baru</h4>
+            <div class="form-group">
+                <label for="customOptionName">Nama Opsi</label>
+                <input type="text" id="customOptionName" placeholder="Contoh: Custom Art" required>
+            </div>
+            <div class="form-group">
+                <label for="customOptionSlot">Jumlah Slot</label>
+                <input type="number" id="customOptionSlot" value="10" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="customOptionType">Tipe</label>
+                <select id="customOptionType" required>
+                    <option value="character">Character</option>
+                    <option value="tiny">Tiny Character</option>
+                </select>
+            </div>
+            <button type="button" class="btn-primary" onclick="addCustomOption()">Tambah Opsi</button>
+        </div>
+
+        <div class="custom-option-form">
+            <h4>Atur Link Platform Media Sosial</h4>
+            <p style="color: #999; font-size: 9px; margin-bottom: 15px;">Masukkan URL untuk setiap platform yang ingin ditampilkan ke user</p>
+            
+            <div class="form-group">
+                <label for="instagramLink">Instagram</label>
+                <input type="url" id="instagramLink" placeholder="https://instagram.com/username" required>
+            </div>
+            <div class="form-group">
+                <label for="facebookLink">Facebook</label>
+                <input type="url" id="facebookLink" placeholder="https://facebook.com/username" required>
+            </div>
+            <div class="form-group">
+                <label for="discordLink">Discord</label>
+                <input type="url" id="discordLink" placeholder="https://discord.gg/invite" required>
+            </div>
+            <div class="form-group">
+                <label for="xLink">X (Twitter)</label>
+                <input type="url" id="xLink" placeholder="https://x.com/username" required>
+            </div>
+            
+            <button type="button" class="btn-primary" onclick="savePlatformLinks()">Simpan Link Platform</button>
+            <p id="platformSaveMessage" style="color: #5cb85c; font-size: 9px; margin-top: 10px; display: none;">✓ Link platform berhasil disimpan!</p>
+        </div>
+    </div>
+    </div>
+    <!-- End Admin Content -->
+
+    <script>
+        // Password protection
+        const ADMIN_PASSWORD = "DH.hera19";
+
+        function checkPassword() {
+            const inputPassword = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (inputPassword === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                renderSlots();
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                renderSlots();
+                loadPlatformLinks();
+            }
+        });
+
+        // Allow Enter key to login
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('passwordInput')?.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+        });
+
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            window.location.href = 'utama.html';
+        }
+
+        // Slot Manager dengan Custom Slots
+        class SlotManager {
+            static getAll() {
+                const defaultSlots = {
+                    stylized_soft: 10,
+                    stylized_rendered: 10,
+                    ych: 10
+                };
+                return JSON.parse(localStorage.getItem('slots')) || defaultSlots;
+            }
+
+            static getTinyAll() {
+                const defaultTinySlots = {
+                    tiny_rendered: 10,
+                    tiny_ych: 10
+                };
+                return JSON.parse(localStorage.getItem('tinySlots')) || defaultTinySlots;
+            }
+
+            static getCustom() {
+                return JSON.parse(localStorage.getItem('customSlots')) || {};
+            }
+
+            static getCustomTiny() {
+                return JSON.parse(localStorage.getItem('customTinySlots')) || {};
+            }
+
+            static save(slots) {
+                localStorage.setItem('slots', JSON.stringify(slots));
+            }
+
+            static saveTiny(tinySlots) {
+                localStorage.setItem('tinySlots', JSON.stringify(tinySlots));
+            }
+
+            static saveCustom(customSlots) {
+                localStorage.setItem('customSlots', JSON.stringify(customSlots));
+            }
+
+            static saveCustomTiny(customTinySlots) {
+                localStorage.setItem('customTinySlots', JSON.stringify(customTinySlots));
+            }
+
+            static add(slotName, amount = 1) {
+                const slots = this.getAll();
+                if (slots[slotName] !== undefined) {
+                    slots[slotName] += amount;
+                    this.save(slots);
+                    return true;
+                }
+                return false;
+            }
+
+            static addTiny(slotName, amount = 1) {
+                const tinySlots = this.getTinyAll();
+                if (tinySlots[slotName] !== undefined) {
+                    tinySlots[slotName] += amount;
+                    this.saveTiny(tinySlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static addCustom(slotName, amount = 1) {
+                const customSlots = this.getCustom();
+                if (customSlots[slotName] !== undefined) {
+                    customSlots[slotName] += amount;
+                    this.saveCustom(customSlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static addCustomTiny(slotName, amount = 1) {
+                const customTinySlots = this.getCustomTiny();
+                if (customTinySlots[slotName] !== undefined) {
+                    customTinySlots[slotName] += amount;
+                    this.saveCustomTiny(customTinySlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static reduce(slotName, amount = 1) {
+                const slots = this.getAll();
+                if (slots[slotName] !== undefined && slots[slotName] >= amount) {
+                    slots[slotName] -= amount;
+                    this.save(slots);
+                    return true;
+                }
+                return false;
+            }
+
+            static reduceTiny(slotName, amount = 1) {
+                const tinySlots = this.getTinyAll();
+                if (tinySlots[slotName] !== undefined && tinySlots[slotName] >= amount) {
+                    tinySlots[slotName] -= amount;
+                    this.saveTiny(tinySlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static reduceCustom(slotName, amount = 1) {
+                const customSlots = this.getCustom();
+                if (customSlots[slotName] !== undefined && customSlots[slotName] >= amount) {
+                    customSlots[slotName] -= amount;
+                    this.saveCustom(customSlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static reduceCustomTiny(slotName, amount = 1) {
+                const customTinySlots = this.getCustomTiny();
+                if (customTinySlots[slotName] !== undefined && customTinySlots[slotName] >= amount) {
+                    customTinySlots[slotName] -= amount;
+                    this.saveCustomTiny(customTinySlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static deleteCustom(slotName) {
+                const customSlots = this.getCustom();
+                if (customSlots[slotName] !== undefined) {
+                    delete customSlots[slotName];
+                    this.saveCustom(customSlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static deleteCustomTiny(slotName) {
+                const customTinySlots = this.getCustomTiny();
+                if (customTinySlots[slotName] !== undefined) {
+                    delete customTinySlots[slotName];
+                    this.saveCustomTiny(customTinySlots);
+                    return true;
+                }
+                return false;
+            }
+
+            static reset() {
+                const defaultSlots = {
+                    stylized_soft: 10,
+                    stylized_rendered: 10,
+                    ych: 10
+                };
+                const defaultTinySlots = {
+                    tiny_rendered: 10,
+                    tiny_ych: 10
+                };
+                this.save(defaultSlots);
+                this.saveTiny(defaultTinySlots);
+                this.saveCustom({});
+                this.saveCustomTiny({});
+            }
+        }
+
+        const slotLabels = {
+            stylized_soft: 'Stylized Soft Shading',
+            stylized_rendered: 'Stylized Rendered',
+            ych: 'YCH',
+            tiny_rendered: 'Tiny Rendered',
+            tiny_ych: 'Tiny YCH'
+        };
+
+        function renderSlots() {
+            const slotGrid = document.getElementById('slotGrid');
+            const slots = SlotManager.getAll();
+            const tinySlots = SlotManager.getTinyAll();
+            const customSlots = SlotManager.getCustom();
+            const customTinySlots = SlotManager.getCustomTiny();
+
+            let html = '<h3 class="section-title">Character</h3>';
+            for (const [key, count] of Object.entries(slots)) {
+                const emptyClass = count === 0 ? 'empty' : '';
+                html += `
+                    <div class="slot-card ${emptyClass}">
+                        <div class="slot-name">${slotLabels[key]}</div>
+                        <div class="slot-count">${count}</div>
+                        <div class="slot-buttons">
+                            <button class="slot-btn slot-btn-add" onclick="addSlot('${key}')">+</button>
+                            <button class="slot-btn slot-btn-minus" onclick="reduceSlot('${key}')">-</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '<h3 class="section-title">Character Custom</h3>';
+            const customEntries = Object.entries(customSlots);
+            if (customEntries.length === 0) {
+                html += '<p style="color: #999; font-size: 10px; margin: 10px 0;">Belum ada opsi custom</p>';
+            }
+            for (const [key, count] of customEntries) {
+                const emptyClass = count === 0 ? 'empty' : '';
+                html += `
+                    <div class="slot-card ${emptyClass}">
+                        <div class="slot-name">${key}</div>
+                        <div class="slot-count">${count}</div>
+                        <div class="slot-buttons">
+                            <button class="slot-btn slot-btn-add" onclick="addCustomSlot('${key}')">+</button>
+                            <button class="slot-btn slot-btn-minus" onclick="reduceCustomSlot('${key}')">-</button>
+                        </div>
+                        <button class="slot-btn slot-btn-delete" onclick="deleteCustomSlot('${key}')">Hapus</button>
+                    </div>
+                `;
+            }
+
+            html += '<h3 class="section-title">Tiny Character</h3>';
+            for (const [key, count] of Object.entries(tinySlots)) {
+                const emptyClass = count === 0 ? 'empty' : '';
+                html += `
+                    <div class="slot-card ${emptyClass}">
+                        <div class="slot-name">${slotLabels[key]}</div>
+                        <div class="slot-count">${count}</div>
+                        <div class="slot-buttons">
+                            <button class="slot-btn slot-btn-add" onclick="addTinySlot('${key}')">+</button>
+                            <button class="slot-btn slot-btn-minus" onclick="reduceTinySlot('${key}')">-</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '<h3 class="section-title">Tiny Character Custom</h3>';
+            const customTinyEntries = Object.entries(customTinySlots);
+            if (customTinyEntries.length === 0) {
+                html += '<p style="color: #999; font-size: 10px; margin: 10px 0;">Belum ada opsi custom</p>';
+            }
+            for (const [key, count] of customTinyEntries) {
+                const emptyClass = count === 0 ? 'empty' : '';
+                html += `
+                    <div class="slot-card ${emptyClass}">
+                        <div class="slot-name">${key}</div>
+                        <div class="slot-count">${count}</div>
+                        <div class="slot-buttons">
+                            <button class="slot-btn slot-btn-add" onclick="addCustomTinySlot('${key}')">+</button>
+                            <button class="slot-btn slot-btn-minus" onclick="reduceCustomTinySlot('${key}')">-</button>
+                        </div>
+                        <button class="slot-btn slot-btn-delete" onclick="deleteCustomTinySlot('${key}')">Hapus</button>
+                    </div>
+                `;
+            }
+
+            slotGrid.innerHTML = html;
+        }
+
+        function addSlot(slotName) {
+            SlotManager.add(slotName);
+            renderSlots();
+        }
+
+        function reduceSlot(slotName) {
+            SlotManager.reduce(slotName);
+            renderSlots();
+        }
+
+        function addTinySlot(slotName) {
+            SlotManager.addTiny(slotName);
+            renderSlots();
+        }
+
+        function reduceTinySlot(slotName) {
+            SlotManager.reduceTiny(slotName);
+            renderSlots();
+        }
+
+        function addCustomSlot(slotName) {
+            SlotManager.addCustom(slotName);
+            renderSlots();
+        }
+
+        function reduceCustomSlot(slotName) {
+            SlotManager.reduceCustom(slotName);
+            renderSlots();
+        }
+
+        function addCustomTinySlot(slotName) {
+            SlotManager.addCustomTiny(slotName);
+            renderSlots();
+        }
+
+        function reduceCustomTinySlot(slotName) {
+            SlotManager.reduceCustomTiny(slotName);
+            renderSlots();
+        }
+
+        function deleteCustomSlot(slotName) {
+            if (confirm(`Hapus opsi "${slotName}"?`)) {
+                SlotManager.deleteCustom(slotName);
+                renderSlots();
+            }
+        }
+
+        function deleteCustomTinySlot(slotName) {
+            if (confirm(`Hapus opsi "${slotName}"?`)) {
+                SlotManager.deleteCustomTiny(slotName);
+                renderSlots();
+            }
+        }
+
+        function resetAllSlots() {
+            if (confirm('Reset semua slot ke default? Opsi custom akan dihapus.')) {
+                SlotManager.reset();
+                renderSlots();
+                alert('Semua slot telah direset!');
+            }
+        }
+
+        function addCustomOption() {
+            const name = document.getElementById('customOptionName').value.trim();
+            const slotCount = parseInt(document.getElementById('customOptionSlot').value);
+            const type = document.getElementById('customOptionType').value;
+
+            if (!name) {
+                alert('Nama opsi harus diisi!');
+                return;
+            }
+
+            if (isNaN(slotCount) || slotCount < 0) {
+                alert('Jumlah slot harus valid!');
+                return;
+            }
+
+            if (type === 'character') {
+                const customSlots = SlotManager.getCustom();
+                customSlots[name] = slotCount;
+                SlotManager.saveCustom(customSlots);
+            } else {
+                const customTinySlots = SlotManager.getCustomTiny();
+                customTinySlots[name] = slotCount;
+                SlotManager.saveCustomTiny(customTinySlots);
+            }
+
+            document.getElementById('customOptionName').value = '';
+            document.getElementById('customOptionSlot').value = '10';
+            document.getElementById('customOptionType').value = 'character';
+
+            renderSlots();
+            alert('Opsi berhasil ditambahkan!');
+        }
+
+        function savePlatformLinks() {
+            const instagramLink = document.getElementById('instagramLink').value.trim();
+            const facebookLink = document.getElementById('facebookLink').value.trim();
+            const discordLink = document.getElementById('discordLink').value.trim();
+            const xLink = document.getElementById('xLink').value.trim();
+
+            const platformLinks = {};
+
+            if (instagramLink) platformLinks['instagram'] = instagramLink;
+            if (facebookLink) platformLinks['facebook'] = facebookLink;
+            if (discordLink) platformLinks['discord'] = discordLink;
+            if (xLink) platformLinks['x'] = xLink;
+
+            if (Object.keys(platformLinks).length === 0) {
+                alert('Silakan isi minimal satu platform!');
+                return;
+            }
+
+            localStorage.setItem('platformLinks', JSON.stringify(platformLinks));
+            
+            // Show success message
+            const messageEl = document.getElementById('platformSaveMessage');
+            messageEl.style.display = 'block';
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+
+        function loadPlatformLinks() {
+            const platformLinks = JSON.parse(localStorage.getItem('platformLinks') || '{}');
+            
+            if (platformLinks['instagram']) {
+                document.getElementById('instagramLink').value = platformLinks['instagram'];
+            }
+            if (platformLinks['facebook']) {
+                document.getElementById('facebookLink').value = platformLinks['facebook'];
+            }
+            if (platformLinks['discord']) {
+                document.getElementById('discordLink').value = platformLinks['discord'];
+            }
+            if (platformLinks['x']) {
+                document.getElementById('xLink').value = platformLinks['x'];
+            }
+        }
+
+        function goHome() {
+            window.location.href = 'utama.html';
+        }
+
+        // Remove auto-render on page load since we need login first
+        // renderSlots(); - moved to after login
+    </script>
+</body>
+</html>

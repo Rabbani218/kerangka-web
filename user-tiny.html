@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiny Character - Pilih Opsi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: #949AA4;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #585A5F;
+        }
+
+        h1 {
+            color: #343538;
+            font-size: 20px;
+            flex: 1;
+        }
+
+        .info-box {
+            background: #949AA4;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .tiny-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tiny-card {
+            background: #f9f9f9;
+            border: 2px solid #949AA4;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 2.5 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .tiny-card:hover:not(.disabled) {
+            border-color: #585A5F;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.3);
+        }
+
+        .tiny-card.selected {
+            background: #343538;
+            border-color: #343538;
+            color: white;
+        }
+
+        .tiny-card.disabled {
+            background: #e8e8e8;
+            border-color: #d0d0d0;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .tiny-card.disabled .tiny-name,
+        .tiny-card.disabled .tiny-desc {
+            color: #999;
+        }
+
+        .slot-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #949AA4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .tiny-card.disabled .slot-badge {
+            background: #c0c0c0;
+        }
+
+        .tiny-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .tiny-name {
+            font-weight: 600;
+            color: #343538;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .tiny-card.selected .tiny-name {
+            color: white;
+        }
+
+        .tiny-desc {
+            font-size: 10px;
+            color: #585A5F;
+        }
+
+        .tiny-card.selected .tiny-desc {
+            color: #949AA4;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: #343538;
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.4);
+        }
+
+        .btn-next:disabled {
+            background: #c0c0c0;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: #949AA4;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tiny Character</h1>
+        </div>
+
+        <div class="info-box">
+            Silakan pilih opsi art style untuk tiny character
+        </div>
+
+        <div class="tiny-grid">
+            <div class="tiny-card" id="opt-tiny_rendered" onclick="selectTiny('tiny_rendered', this)">
+                <div class="slot-badge" id="badge-tiny_rendered">10</div>
+                <div class="tiny-name">Art Style 1</div>
+                <div class="tiny-desc">Rendered Illustration</div>
+            </div>
+
+            <div class="tiny-card" id="opt-tiny_ych" onclick="selectTiny('tiny_ych', this)">
+                <div class="slot-badge" id="badge-tiny_ych">10</div>
+                <div class="tiny-name">YCH</div>
+                <div class="tiny-desc">Your Character Here</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-back" onclick="goBack()">Kembali</button>
+            <button class="btn-next" id="nextBtn" onclick="goToNext()" disabled>Selesai</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedTiny = null;
+
+        // Check slot availability saat halaman load
+        function checkSlotAvailability() {
+            const tinySlots = JSON.parse(localStorage.getItem('tinySlots') || '{"tiny_rendered": 10, "tiny_ych": 10}');
+
+            const options = [
+                { id: 'tiny_rendered', element: document.getElementById('opt-tiny_rendered') },
+                { id: 'tiny_ych', element: document.getElementById('opt-tiny_ych') }
+            ];
+
+            options.forEach(option => {
+                const count = tinySlots[option.id] || 0;
+                
+                // Update badge
+                const badge = document.getElementById(`badge-${option.id}`);
+                if (badge) {
+                    badge.textContent = count;
+                }
+                
+                // Add/remove disabled class
+                if (count === 0) {
+                    option.element.classList.add('disabled');
+                } else {
+                    option.element.classList.remove('disabled');
+                }
+            });
+        }
+
+        function selectTiny(type, element) {
+            // Cek apakah slot habis
+            if (element.classList.contains('disabled')) {
+                alert('Slot untuk pilihan ini sudah habis');
+                return;
+            }
+
+            // Hapus seleksi sebelumnya
+            document.querySelectorAll('.tiny-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Tambahkan seleksi baru
+            element.classList.add('selected');
+            selectedTiny = type;
+
+            // Aktifkan tombol selesai
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function goToNext() {
+            if (selectedTiny) {
+                // Simpan pilihan art style tiny ke localStorage
+                localStorage.setItem('selectedTiny', selectedTiny);
+                // Juga simpan sebagai selectedOption untuk konsistensi
+                localStorage.setItem('selectedOption', selectedTiny);
+
+                // Arahkan ke halaman sukses
+                window.location.href = 'user-success.html';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'user-character.html';
+        }
+
+        // Jalankan saat halaman load
+        window.addEventListener('load', checkSlotAvailability);
+    </script>
+</body>
+</html>

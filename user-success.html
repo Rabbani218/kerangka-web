@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antrian Berhasil Diambil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 50px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #585A5F;
+            margin-bottom: 40px;
+            font-size: 10px;
+        }
+
+        .queue-info {
+            background: #949AA4;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .queue-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .info-item {
+            margin: 12px 0;
+            font-size: 10px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+        }
+
+        .info-value {
+            text-align: right;
+        }
+
+        .status-box {
+            background: #f0f0f0;
+            border-left: 4px solid #343538;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        .status-box p {
+            color: #343538;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-home {
+            background: #343538;
+            color: white;
+        }
+
+        .btn-home:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.4);
+        }
+
+        .btn-admin {
+            background: #949AA4;
+            color: white;
+        }
+
+        .btn-admin:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
+        }
+
+        .platforms-section {
+            background: #f9f9f9;
+            border: 2px solid #949AA4;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .platforms-title {
+            color: #343538;
+            font-size: 11px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .platforms-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .platform-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border: 1px solid #949AA4;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #343538;
+            font-size: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .platform-link:hover {
+            background: #949AA4;
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .platform-icon {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Antrian Berhasil</h1>
+        <p class="subtitle">Nomor antrian Anda telah terdaftar</p>
+
+        <div class="queue-info">
+            <div class="queue-number" id="queueNumber">A123</div>
+            <div class="info-item">
+                <span class="info-label">Nama:</span>
+                <span class="info-value" id="namaDisplay">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Pilihan:</span>
+                <span class="info-value" id="layananDisplay">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Waktu Daftar:</span>
+                <span class="info-value" id="waktuDisplay">-</span>
+            </div>
+        </div>
+
+        <div class="status-box">
+            <p><strong>Instruksi:</strong> Silakan screenshot nomor antrian ini dan kirim melalui DM ke salah satu platform berikut untuk konfirmasi pendaftaran.</p>
+        </div>
+
+        <div class="platforms-section" id="platformsSection">
+            <p class="platforms-title">Hubungi Kami Melalui:</p>
+            <div class="platforms-list" id="platformsList"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-home" onclick="goHome()">Kembali ke Menu Utama</button>
+        </div>
+    </div>
+
+    <script>
+        // Generate queue number: 01-AB-01 format (date-letters-numbers)
+        function generateQueueNumber() {
+            const today = new Date();
+            const dateString = String(today.getDate()).padStart(2, '0'); // 01-31
+            
+            // Allowed letters (excluding z, x, n, p, m, h, g, f, l, y)
+            const allowedLetters = 'ABCDEIJKORSTUV W';
+            let letters = '';
+            for (let i = 0; i < 2; i++) {
+                const randomIndex = Math.floor(Math.random() * allowedLetters.length);
+                letters += allowedLetters[randomIndex];
+            }
+            
+            const randomNumbers = Math.floor(Math.random() * 90) + 10; // 10-99
+            
+            return `${dateString}-${letters}-${randomNumbers}`;
+        }
+
+        function loadUserData() {
+            const userName = localStorage.getItem('userName') || '-';
+            const selectedOption = localStorage.getItem('selectedOption') || '-';
+            const characterType = localStorage.getItem('characterType') || 'character';
+            
+            // Format pilihan
+            let pilihan = '-';
+            if (characterType === 'tiny') {
+                if (selectedOption === 'tiny_rendered') {
+                    pilihan = 'Art Style 1 (Rendered Illustration)';
+                } else if (selectedOption === 'tiny_ych') {
+                    pilihan = 'YCH (Your Character Here)';
+                }
+            } else {
+                if (selectedOption === 'stylized_soft') {
+                    pilihan = 'Art Style 1 (Stylized Soft)';
+                } else if (selectedOption === 'stylized_rendered') {
+                    pilihan = 'Art Style 2 (Stylized Rendered)';
+                } else if (selectedOption === 'ych') {
+                    pilihan = 'YCH (Your Character Here)';
+                }
+            }
+            
+            const nomorAntrian = generateQueueNumber();
+            const waktuDaftar = new Date().toLocaleTimeString('id-ID');
+            
+            document.getElementById('queueNumber').textContent = nomorAntrian;
+            document.getElementById('namaDisplay').textContent = userName;
+            document.getElementById('layananDisplay').textContent = pilihan;
+            document.getElementById('waktuDisplay').textContent = waktuDaftar;
+
+            // Store queue data to send to admin
+            const queueData = {
+                nama: userName,
+                pilihan: selectedOption,
+                characterType: characterType,
+                status: 'menunggu'
+            };
+            localStorage.setItem('tempQueueData', JSON.stringify(queueData));
+
+            // Load and display platform links
+            loadPlatformLinks();
+        }
+
+        function loadPlatformLinks() {
+            const platformLinks = JSON.parse(localStorage.getItem('platformLinks') || '{}');
+            const platformsList = document.getElementById('platformsList');
+            
+            const platforms = [
+                { key: 'instagram', name: 'Instagram', icon: '📷' },
+                { key: 'facebook', name: 'Facebook', icon: '👍' },
+                { key: 'discord', name: 'Discord', icon: '💬' },
+                { key: 'x', name: 'X (Twitter)', icon: '𝕏' }
+            ];
+
+            platformsList.innerHTML = '';
+
+            platforms.forEach(platform => {
+                const link = platformLinks[platform.key];
+                if (link) {
+                    const linkElement = document.createElement('a');
+                    linkElement.href = link;
+                    linkElement.target = '_blank';
+                    linkElement.rel = 'noopener noreferrer';
+                    linkElement.className = 'platform-link';
+                    linkElement.innerHTML = `
+                        <span class="platform-icon">${platform.icon}</span>
+                        <span>${platform.name}</span>
+                    `;
+                    platformsList.appendChild(linkElement);
+                }
+            });
+
+            // Jika tidak ada platform yang dikonfigurasi
+            if (platformsList.children.length === 0) {
+                platformsList.innerHTML = '<p style="color: #999; font-size: 10px; text-align: center;">Admin belum mengatur platform komunikasi.</p>';
+            }
+        }
+
+        function goHome() {
+            window.location.href = 'utama.html';
+        }
+
+        // Load data on page load
+        loadUserData();
+    </script>
+</body>
+</html>

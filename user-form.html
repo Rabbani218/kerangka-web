@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambil Antrian - User</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 50px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: #949AA4;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #585A5F;
+        }
+
+        h1 {
+            color: #343538;
+            font-size: 16px;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #343538;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #949AA4;
+            border-radius: 8px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            color: #343538;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #585A5F;
+            box-shadow: 0 0 5px rgba(88, 90, 95, 0.3);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: #343538;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 53, 56, 0.4);
+        }
+
+        .btn-reset {
+            background: #949AA4;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
+        }
+
+        .info-box {
+            background: #949AA4;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .error-msg {
+            color: #d9534f;
+            font-size: 12px;
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ambil Antrian</h1>
+        </div>
+
+        <div class="info-box">
+            Masukkan nama Anda untuk melanjutkan
+        </div>
+
+        <form id="userForm">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap *</label>
+                <input type="text" id="nama" name="nama" required placeholder="Masukkan nama Anda">
+                <div class="error-msg" id="namaError">Nama harus diisi</div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn-submit">Selanjutnya</button>
+                <button type="button" class="btn-reset" onclick="goBack()">Kembali</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'utama.html';
+        }
+
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nama = document.getElementById('nama').value.trim();
+
+            if (!nama) {
+                document.getElementById('namaError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('namaError').style.display = 'none';
+            }
+
+            // Simpan nama ke localStorage
+            localStorage.setItem('userName', nama);
+
+            // Arahkan ke halaman pilihan karakter
+            window.location.href = 'user-character.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Karakter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #949AA4 0%, #585A5F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(52, 53, 56, 0.3);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: #949AA4;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #585A5F;
+        }
+
+        h1 {
+            color: #343538;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .info-box {
+            background: #949AA4;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .character-card {
+            background: #f9f9f9;
+            border: 2px solid #949AA4;
+            border-radius: 8px;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .character-card:hover {
+            border-color: #585A5F;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.3);
+        }
+
+        .character-card.selected {
+            background: #343538;
+            border-color: #343538;
+            color: white;
+        }
+
+        .character-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .character-name {
+            font-weight: 600;
+            color: #343538;
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+
+        .character-card.selected .character-name {
+            color: white;
+        }
+
+        .character-desc {
+            font-size: 10px;
+            color: #585A5F;
+        }
+
+        .character-card.selected .character-desc {
+            color: #949AA4;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back {
+            background: #949AA4;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #585A5F;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 90, 95, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pilih Karakter</h1>
+        </div>
+
+        <div class="info-box">
+            Silakan pilih jenis karakter untuk melanjutkan
+        </div>
+
+        <div class="character-grid">
+            <div class="character-card" onclick="selectCharacter('character', this)">
+                <div class="character-name">Character</div>
+                <div class="character-desc">Pilihan standar</div>
+            </div>
+
+            <div class="character-card" onclick="selectCharacter('tiny', this)">
+                <div class="character-name">Tiny Character</div>
+                <div class="character-desc">Ukuran kecil</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-back" onclick="goBack()">Kembali</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedType = null;
+
+        function selectCharacter(type, element) {
+            // Simpan tipe karakter ke localStorage
+            localStorage.setItem('characterType', type);
+
+            // Tentukan halaman berikutnya berdasarkan tipe
+            if (type === 'character') {
+                window.location.href = 'user-options.html';
+            } else if (type === 'tiny') {
+                window.location.href = 'user-tiny.html';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'user-form.html';
+        }
+    </script>
+</body>
+</html>
